@@ -10,8 +10,12 @@ interface Goal {
   isCompleted: boolean;
 }
 
-export default function DashboardPage() {
+export default function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('Học tập');
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('Đang thực hiện');
 
   const fetchGoals = async () => {
     try {
@@ -21,13 +25,39 @@ export default function DashboardPage() {
         setGoals(data);
       }
     } catch (error) {
-      console.error('Lỗi khi tải dữ liệu:', error);
+      console.error('Lỗi khi tải dữ liệu mục tiêu:', error);
     }
   };
 
   useEffect(() => {
     fetchGoals();
   }, []);
+
+  const handleAddGoal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return;
+
+    try {
+      const res = await fetch('/api/goals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          category,
+          progress: Number(progress),
+          isCompleted: status === 'Hoàn thành' || progress === 100,
+        }),
+      });
+
+      if (res.ok) {
+        setTitle('');
+        setProgress(0);
+        fetchGoals(); // Tải lại danh sách sau khi thêm thành công
+      }
+    } catch (error) {
+      console.error('Lỗi khi thêm mục tiêu:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-gray-900">
@@ -39,13 +69,13 @@ export default function DashboardPage() {
             </svg>
           </div>
           <div>
-            <h1 className="font-bold text-xl text-gray-900 tracking-tight">Quản Lý Mục Tiêu</h1>
-            <p className="text-xs text-gray-500 font-medium mt-0.5">Dự án cá nhân Kyanon</p>
+            <h1 className="font-bold text-xl text-gray-900 tracking-tight">Quản lý Mục tiêu Học tập</h1>
+            <p className="text-xs text-gray-500 font-medium mt-0.5">Theo dõi tiến độ học tập và phát triển dự án của bạn.</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right hidden md:block">
-            <p className="text-sm font-bold text-gray-900">Phan Chi Vy</p>
+            <p className="text-sm font-bold text-gray-900">Phan Chí Vỹ</p>
             <p className="text-xs text-gray-500">chivy@example.com</p>
           </div>
           <a href="/login" className="p-2.5 bg-gray-50 border border-gray-100 rounded-full hover:bg-red-50 hover:text-red-600 transition-colors group">
@@ -55,42 +85,79 @@ export default function DashboardPage() {
       </header>
 
       <main className="max-w-5xl mx-auto p-6 lg:p-8">
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Bảng Điều Khiển Học Tập</h2>
-            <p className="text-gray-500 text-sm mt-1">Theo dõi và cập nhật tiến độ mục tiêu của bạn hàng ngày</p>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
-            <div>
-              <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Tổng mục tiêu</p>
-              <h3 className="text-3xl font-black text-gray-800">{goals.length}</h3>
-            </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Tổng số mục tiêu</p>
+            <h3 className="text-3xl font-black text-gray-800">{goals.length}</h3>
           </div>
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
-            <div>
-              <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Đã hoàn thành</p>
-              <h3 className="text-3xl font-black text-green-500">
-                {goals.filter(g => g.progress === 100 || g.isCompleted).length}
-              </h3>
-            </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Đang thực hiện</p>
+            <h3 className="text-3xl font-black text-orange-500">
+              {goals.filter(g => g.progress < 100 && !g.isCompleted).length}
+            </h3>
           </div>
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
-            <div>
-              <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Đang thực hiện</p>
-              <h3 className="text-3xl font-black text-orange-500">
-                {goals.filter(g => g.progress < 100 && !g.isCompleted).length}
-              </h3>
-            </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Đã hoàn thành</p>
+            <h3 className="text-3xl font-black text-green-500">
+              {goals.filter(g => g.progress === 100 || g.isCompleted).length}
+            </h3>
           </div>
         </div>
 
+        {/* Form thêm mục tiêu mới */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-8">
+          <h3 className="font-bold text-lg text-gray-900 mb-4">Thêm mục tiêu mới</h3>
+          <form onSubmit={handleAddGoal} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-600 mb-1">Tên mục tiêu</label>
+              <input 
+                type="text" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Nhập tên mục tiêu..." 
+                className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-600 mb-1">Tiến độ (%)</label>
+              <input 
+                type="number" 
+                min="0" 
+                max="100" 
+                value={progress} 
+                onChange={(e) => setProgress(Number(e.target.value))}
+                className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-600 mb-1">Trạng thái</label>
+              <select 
+                value={status} 
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="Đang thực hiện">Đang thực hiện</option>
+                <option value="Hoàn thành">Hoàn thành</option>
+              </select>
+            </div>
+            <div className="md:col-span-3 flex justify-end mt-2">
+              <button 
+                type="submit" 
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm"
+              >
+                Thêm mục tiêu
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Danh sách mục tiêu */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6">
-          <h3 className="font-bold text-lg text-gray-900 mb-4">Danh sách mục tiêu chi tiết</h3>
+          <h3 className="font-bold text-lg text-gray-900 mb-4">Danh sách mục tiêu hiện tại</h3>
           {goals.length === 0 ? (
-            <p className="text-gray-400 text-center py-8">Chưa có mục tiêu nào trong cơ sở dữ liệu.</p>
+            <p className="text-gray-400 text-center py-8">Chưa có mục tiêu nào phù hợp với bộ lọc này.</p>
           ) : (
             goals.map((goal) => (
               <div key={goal.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-b border-gray-50 gap-4">
