@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -6,93 +7,77 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert('Đăng ký tài khoản thành công!');
-        router.push('/login');
-      } else {
-        setError(data.error || 'Đăng ký thất bại!');
-      }
-    } catch (err) {
-      console.error('Lỗi kết nối:', err);
-      setError('Lỗi kết nối tới server!');
+    if (name && email && password) {
+      alert('Đăng ký tài khoản thành công!');
+      router.push('/login'); // Chuyển hướng sang trang đăng nhập sau khi đăng ký thành công
+    } else {
+      alert('Vui lòng điền đầy đủ thông tin!');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans">
-      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 w-full max-w-md">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Đăng Ký Tài Khoản</h1>
-          <p className="text-sm text-gray-500">Hệ thống Quản Lý Mục Tiêu - Kyanon</p>
+          <h1 className="text-2xl font-bold text-gray-900">Tạo Tài Khoản</h1>
+          <p className="text-sm text-gray-500 mt-1">Đăng ký hệ thống Quản Lý Mục Tiêu</p>
         </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl text-center font-medium">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
-            <input 
-              type="text" 
+            <label className="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+            <input
+              type="text"
+              placeholder="Phan Chí Vỹ"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-900" 
-              placeholder="Phan Chi Vy"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
+              placeholder="chivy@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-900" 
-              placeholder="chivy@example.com"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-900" 
-              placeholder="••••••••"
             />
           </div>
-          <button 
-            type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors cursor-pointer"
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-sm"
           >
             Đăng Ký
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
-          Đã có tài khoản? <a href="/login" className="text-blue-600 font-semibold hover:underline">Đăng nhập ngay</a>
-        </div>
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Đã có tài khoản?{' '}
+          <a href="/login" className="text-blue-600 font-medium hover:underline">
+            Đăng nhập ngay
+          </a>
+        </p>
       </div>
     </div>
   );

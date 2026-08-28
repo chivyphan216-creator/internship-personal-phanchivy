@@ -3,33 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
-// Bảng lưu thông tin Tài Khoản người dùng
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String   // Lưu mật khẩu (nên mã hóa bằng bcrypt)
-  name      String?  // Tên hiển thị (tùy chọn)
-  goals     Goal[]   // Quan hệ: Một user sở hữu nhiều mục tiêu
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Bảng lưu thông tin Mục Tiêu (Đã gắn với User)
 model Goal {
-  id          String   @id @default(cuid())
-  title       String   // Tên mục tiêu (VD: Học Next.js)
-  category    String   // Phân loại (VD: Lập trình, Ngoại ngữ)
-  progress    Int      @default(0) // % hoàn thành
-  deadline    DateTime // Hạn chót
-  isCompleted Boolean  @default(false)
-  
-  userId      String   // Khóa ngoại liên kết với bảng User
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  title     String
+  progress  Int      @default(0)
+  status    String   @default("Đang thực hiện")
+  createdAt DateTime @default(now())
 }
