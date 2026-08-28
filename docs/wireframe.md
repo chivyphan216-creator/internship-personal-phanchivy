@@ -1,14 +1,33 @@
-# Phác thảo giao diện (Wireframe) - Quản Lý Mục Tiêu Học Tập
+# BẢN THIẾT KẾ KHUNG (WIREFRAME) - QUẢN LÝ MỤC TIÊU HỌC TẬP
 
-Dưới đây là thiết kế giao diện (wireframe) cho phiên bản đầu tiên (MVP) của dự án. Thiết kế hướng tới sự tối giản, giúp người dùng tập trung vào việc theo dõi tiến độ.
+## 1. Trang danh sách / Bảng điều khiển (Dashboard & Goals List)
 
-## 1. Thành phần giao diện chính
-- **Khu vực nhập liệu:** Gồm ô nhập tên mục tiêu, chọn hạn chót và nút bấm thêm mới.
-- **Danh sách mục tiêu:** Liệt kê các mục tiêu đang thực hiện.
-- **Thanh tiến độ:** Hiển thị phần trăm hoàn thành bằng thanh màu (Progress bar) trực quan.
-- **Khu vực thao tác:** Nút cập nhật tiến độ và nút xóa mục tiêu.
+| QUẢN LÝ MỤC TIÊU HỌC TẬP [ + Thêm mục tiêu mới ] |
+|--------------------------------------------------|
+| [Tìm kiếm tiêu đề...] [Trạng thái ▼] [Lọc]        |
 
-## 2. Hình ảnh phác thảo
-*(Ní chụp lại màn hình giao diện trang web lúc nãy, lưu tên file là `wireframe.png` rồi kéo thả file ảnh đó vào thư mục `docs` trong VS Code nhé)*
+| Mục tiêu 1 | Mô tả: Hoàn thành chứng chỉ | Danh mục: Lập trình | Tiến độ: 80% | Trạng thái: Đang thực hiện | Hạn: 30/09/2026 | [Sửa] [Xóa] |
+| Mục tiêu 2 | Mô tả: Đọc 5 sách IT | Danh mục: Kỹ năng | Tiến độ: 100% | Trạng thái: Hoàn thành | Hạn: 25/08/2026 | [Sửa] [Xóa] |
 
-![Giao Diện Quản Lý Mục Tiêu](./wireframe.png)
+
+## 2. Trang thêm / sửa mục tiêu (Form Modal / Page)
+
+| FORM THÊM / CẬP NHẬT MỤC TIÊU HỌC TẬP |
+|--------------------------------------|
+| Tên mục tiêu: [ Nhập tên mục tiêu... ] |
+| Mô tả chi tiết: [ Nhập mô tả... ] |
+| Danh mục: [ Học tập ▼ ] |
+| Mức độ ưu tiên: [ Cao / Trung bình / Thấp ▼ ] |
+| Tiến độ (%): [ 0 - 100 ] |
+| Trạng thái: [ Chưa làm / Đang làm / Hoàn thành ▼ ] |
+| Hạn hoàn thành: [ DD/MM/YYYY ] |
+| [ Hủy ] [ Lưu mục tiêu ] |
+
+
+## 3. Các trạng thái giao diện đặc biệt (States)
+
+- **Loading State:** Hiển thị khung xương (Skeleton loader) hoặc vòng quay xoay khi đang tải dữ liệu từ API.
+- **Empty State:** 
+  > Không tìm thấy mục tiêu học tập nào phù hợp.
+- **Error State:** 
+  > Không thể kết nối cơ sở dữ liệu. Vui lòng kiểm tra lại đường truyền!
