@@ -1,59 +1,141 @@
-# 🚀 Personal Goal Tracker (Ứng dụng Quản lý Mục tiêu Cá nhân)
+Markdown
+# ỨNG DỤNG QUẢN LÝ CÔNG VIỆC CÁ NHÂN (PERSONAL TASK MANAGEMENT)
 
-Ứng dụng Web Full-stack hiện đại được phát triển bằng **Next.js (App Router)**, **Prisma ORM**, và **Tailwind CSS**. Dự án giúp người dùng dễ dàng thiết lập, theo dõi tiến độ học tập và quản lý các mục tiêu cá nhân một cách trực quan, khoa học.
-
----
-
-## 🛠️ Công nghệ sử dụng
-
-* **Frontend:** Next.js (App Router, Server & Client Components), React, Tailwind CSS.
-* **Backend:** Next.js Route Handlers (API Endpoints tại `/api/goals`).
-* **Database & ORM:** SQLite kết hợp với **Prisma ORM** để thao tác dữ liệu an toàn.
-* **Xác thực & Phiên làm việc:** Quản lý trạng thái người dùng thông qua `localStorage` và chuyển hướng linh hoạt bằng `useRouter`.
-* **Quản lý mã nguồn & Triển khai:** Git, GitHub, Vercel.
+Ứng dụng web quản lý công việc cá nhân được xây dựng trong chương trình thực tập Web Full-stack. Hệ thống cho phép người dùng đăng ký, đăng nhập và quản lý các công việc cá nhân một cách bảo mật, phân quyền rõ ràng giữa Người dùng (User) và Quản trị viên (Admin).
 
 ---
 
-## ✨ Các tính năng nổi bật
+## 1. Công nghệ sử dụng
 
-1. **Hệ thống Xác thực Người dùng (Authentication):**
-   * Trang Đăng ký (`/register`) và Đăng nhập (`/login`) giao diện trực quan.
-   * Lưu trữ thông tin định danh phiên làm việc qua `localStorage`.
-   * Giao diện quản lý tích hợp sẵn khung thông tin cá nhân (`UserProfile`) và nút Đăng xuất an toàn.
-
-2. **Quản lý Mục tiêu Toàn diện (CRUD):**
-   * **Create (Thêm mới):** Thêm tiêu đề mục tiêu, phần trăm tiến độ hoàn thành (`0% - 100%`) và phân loại trạng thái.
-   * **Read (Hiển thị):** Tải và hiển thị danh sách mục tiêu trực tiếp từ Database với thanh tiến độ (Progress Bar) sinh động cùng ngày tạo tự động.
-   * **Update (Chỉnh sửa):** Cho phép sửa nhanh tên, cập nhật % tiến độ hoặc thay đổi trạng thái ngay trên từng dòng mục tiêu mà không cần chuyển trang.
-   * **Delete (Xóa):** Xóa mục tiêu không cần thiết kèm hộp thoại xác nhận (`confirm`) tránh thao tác nhầm.
-
-3. **Bộ lọc Trạng thái Thông minh (Filtering):**
-   * Hệ thống tab lọc nhanh theo thời gian thực: *Tất cả*, *Đang thực hiện*, *Hoàn thành*, và *Tạm hoãn*.
+* **Giao diện người dùng (Frontend):** Next.js (App Router), React, TypeScript, Tailwind CSS.
+* **Phần phụ trợ (Backend):** Next.js Server Actions, Prisma ORM.
+* **Cơ sở dữ liệu (Database):** PostgreSQL, Neon PostgreSQL.
+* **Xác thực (Authentication):** `bcryptjs`, `Jose`, JWT Sessions, HTTP-only Cookies.
+* **Triển khai (Deployment):** Vercel.
 
 ---
 
-## 📂 Cấu trúc Thư mục Dự án
+## 2. Chức năng chính
+
+### 2.1. Xác thực & Phân quyền
+* **Xác thực:** Đăng ký tài khoản, Đăng nhập, Đăng xuất, mã hóa mật khẩu bằng `bcrypt`, quản lý phiên làm việc bằng JWT qua HTTP-only Cookie.
+* **Phân quyền (2 Vai trò):**
+  * **USER:** Chỉ có thể xem, thêm, sửa, xóa công việc của chính mình. Không được phép chỉnh sửa/xóa công việc của người khác hay truy cập trang quản trị.
+  * **ADMIN:** Có toàn quyền quản lý hệ thống, bao gồm xem toàn bộ công việc, quản lý công việc và xem danh sách người dùng, thống kê tài khoản.
+
+### 2.2. Quản lý công việc (Task CRUD)
+* Xem danh sách công việc cá nhân.
+* Thêm, sửa, xóa công việc (có hộp thoại xác nhận trước khi xóa).
+* Tìm kiếm công việc theo tiêu đề.
+* Lọc công việc theo trạng thái (`TODO`, `IN_PROGRESS`, `COMPLETED`), theo danh mục (`Category`) và theo mức độ ưu tiên (`Priority`).
+* Đặt và kiểm soát hạn hoàn thành (`deadline`) cho từng công việc.
+
+---
+
+## 3. Validation dữ liệu (Kiểm tra phía Server & Client)
+* Tiêu đề không được để trống và phải có tối thiểu 3 ký tự.
+* Email đăng ký không được trùng lặp.
+* Mật khẩu tối thiểu 6 ký tự.
+* Không thể chọn hạn hoàn thành là ngày đã qua.
+* Kiểm tra chặt chẽ quyền sở hữu khi thực hiện sửa/xóa công việc ở phía máy chủ.
+
+---
+
+## 4. Giao diện người dùng & Trải nghiệm (UI/UX)
+* Thiết kế Responsive tương thích mượt mà trên Desktop, Tablet và Mobile.
+* Tích hợp Dashboard thống kê tổng quan công việc.
+* Đầy đủ các trạng thái giao diện: **Loading state** (Khung xương Skeleton), **Empty state** (Trạng thái trống), **Error state** (Trạng thái lỗi).
+* Hệ thống thông báo toast/alert trực quan khi thêm, sửa, xóa thành công.
+
+---
+
+## 5. Cấu trúc cơ sở dữ liệu (Database Schemas)
+Hệ thống sử dụng PostgreSQL với các bảng chính:
+* **User:** Lưu thông tin tài khoản và vai trò phân quyền (`USER` / `ADMIN`).
+* **Category:** Lưu danh mục công việc.
+* **Priority:** Lưu mức độ ưu tiên.
+* **Task:** Lưu thông tin công việc chi tiết.
+* **TaskHistory:** Lưu lịch sử thao tác liên quan đến công việc.
+
+**Mối quan hệ:**
+* `User` (1) ──< `Task` (N)
+* `Category` (1) ──< `Task` (N)
+* `Priority` (1) ──< `Task` (N)
+* `Task` (1) ──< `TaskHistory` (N)
+
+---
+
+## 6. Cấu trúc thư mục dự án
 
 ```text
-internship-personal-phanchivys/
+project/
+│
 ├── app/
-│   ├── api/
-│   │   └── goals/
-│   │       └── route.ts        # API Backend xử lý GET, POST, PUT, DELETE
-│   ├── goals/
-│   │   └── page.tsx            # Giao diện chính quản lý mục tiêu & bộ lọc
-│   ├── login/
-│   │   └── page.tsx            # Giao diện đăng nhập
-│   ├── register/
-│   │   └── page.tsx            # Giao diện đăng ký
-│   ├── globals.css             # Cấu hình Tailwind CSS
-│   ├── layout.tsx              # Khung layout chung của ứng dụng
-│   └── page.tsx                # Trang chủ điều hướng
+│   ├── admin/
+│   │   └── users/
+│   │
+│   ├── auth/
+│   │   ├── login/
+│   │   ├── register/
+│   │   └── actions.ts
+│   │
+│   ├── tasks/
+│   │   ├── create/
+│   │   ├── [id]/
+│   │   │   └── edit/
+│   │   └── actions.ts
+│   │
+│   ├── error.tsx
+│   ├── loading.tsx
+│   ├── layout.tsx
+│   └── page.tsx
+│
+├── components/
+│   └── DeleteTaskButton.tsx
+│
+├── lib/
+│   ├── prisma.ts
+│   └── session.ts
+│
 ├── prisma/
-│   ├── migrations/             # Lịch sử migration cơ sở dữ liệu
-│   ├── dev.db                  # File database SQLite tại local
-│   └── schema.prisma           # Định nghĩa mô hình dữ liệu (Schema)
-├── public/                     # Thư mục chứa tài nguyên tĩnh (icons, images)
-├── .env                        # Cấu hình biến môi trường (DATABASE_URL)
-├── package.json                # Danh sách thư viện và dependencies
-└── README.md                   # Tài liệu mô tả dự án
+│   ├── migrations/
+│   ├── schema.prisma
+│   └── seed.ts
+│
+├── public/
+│
+├── test-cases.md
+├── README.md
+├── package.json
+└── .env
+7. Hướng dẫn cài đặt và chạy dự án
+Bước 1: Sao chép mã nguồn và cài đặt thư viện
+Bash
+git clone <repository-url>
+cd <project-folder>
+npm install
+Bước 2: Cấu hình biến môi trường
+Tạo file .env tại thư mục gốc với nội dung:
+
+Code snippet
+DATABASE_URL="your-postgresql-connection-string"
+SESSION_SECRET="your-secret-key"
+Bước 3: Cấu hình Prisma và chạy cơ sở dữ liệu
+Bash
+npx prisma generate
+npx prisma migrate dev
+# (Tùy chọn nếu có seed data)
+npx prisma db seed
+Bước 4: Chạy môi trường phát triển (Development)
+Bash
+npm run dev
+Truy cập ứng dụng tại: http://localhost:3000
+
+8. Triển khai sản xuất (Production Deployment)
+Dự án được cấu hình triển khai trên Vercel với cơ sở dữ liệu PostgreSQL trên Neon.
+
+Cần khai báo đầy đủ biến môi trường DATABASE_URL và SESSION_SECRET trên hệ thống cấu hình của Vercel.
+
+Bash
+npm run build
+npm start
