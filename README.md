@@ -1,4 +1,3 @@
-Markdown
 # ỨNG DỤNG QUẢN LÝ CÔNG VIỆC CÁ NHÂN (PERSONAL TASK MANAGEMENT)
 
 Ứng dụng web quản lý công việc cá nhân được xây dựng trong chương trình thực tập Web Full-stack. Hệ thống cho phép người dùng đăng ký, đăng nhập và quản lý các công việc cá nhân một cách bảo mật, phân quyền rõ ràng giữa Người dùng (User) và Quản trị viên (Admin).
