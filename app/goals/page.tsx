@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import DashboardView from '../components/DashboardView';
+import TransactionForm from '../components/TransactionForm';
+import DeleteButton from '../components/DeleteButton';
 
 interface Goal {
   id: number;
@@ -52,19 +55,12 @@ function UserProfile() {
 
 export default function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [title, setTitle] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState('Đang thực hiện');
-  const [loading, setLoading] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('Tất cả');
 
-  // State phục vụ cho việc chỉnh sửa
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editProgress, setEditProgress] = useState(0);
   const [editStatus, setEditStatus] = useState('');
-
-  // THÊM: State quản lý trạng thái bộ lọc ('Tất cả' hoặc các trạng thái cụ thể)
-  const [filterStatus, setFilterStatus] = useState('Tất cả');
 
   const fetchGoals = async () => {
     try {
@@ -81,51 +77,6 @@ export default function GoalsPage() {
   useEffect(() => {
     fetchGoals();
   }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-
-    setLoading(true);
-    try {
-      const res = await fetch('/api/goals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, progress: Number(progress), status }),
-      });
-
-      if (res.ok) {
-        setTitle('');
-        setProgress(0);
-        setStatus('Đang thực hiện');
-        fetchGoals();
-      }
-    } catch (error) {
-      console.error('Lỗi khi thêm mục tiêu:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm('Bạn có chắc chắn muốn xóa mục tiêu này không?')) return;
-
-    try {
-      const res = await fetch('/api/goals', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-
-      if (res.ok) {
-        fetchGoals();
-      } else {
-        alert('Xóa mục tiêu thất bại!');
-      }
-    } catch (error) {
-      console.error('Lỗi khi xóa mục tiêu:', error);
-    }
-  };
 
   const handleStartEdit = (goal: Goal) => {
     setEditingId(goal.id);
@@ -158,7 +109,6 @@ export default function GoalsPage() {
     }
   };
 
-  // THÊM: Lọc danh sách mục tiêu dựa theo giá trị `filterStatus`
   const filteredGoals = goals.filter((goal) => {
     if (filterStatus === 'Tất cả') return true;
     return goal.status === filterStatus;
@@ -175,55 +125,11 @@ export default function GoalsPage() {
           <UserProfile />
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">Thêm mục tiêu mới</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Tên mục tiêu</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="VD: Hoàn thành đồ án Next.js"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Tiến độ (%)</label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={progress}
-                onChange={(e) => setProgress(Number(e.target.value))}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Trạng thái</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-              >
-                <option value="Đang thực hiện">Đang thực hiện</option>
-                <option value="Hoàn thành">Hoàn thành</option>
-                <option value="Tạm hoãn">Tạm hoãn</option>
-              </select>
-            </div>
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 disabled:opacity-50"
-          >
-            {loading ? 'Đang lưu...' : 'Thêm mục tiêu'}
-          </button>
-        </form>
+        <DashboardView goals={goals} />
+
+        <TransactionForm onAddSuccess={fetchGoals} />
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Header danh sách & Các nút bộ lọc trạng thái */}
           <div className="px-6 py-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h2 className="text-lg font-semibold text-gray-700">Danh sách mục tiêu hiện tại</h2>
             
@@ -278,13 +184,13 @@ export default function GoalsPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleSaveEdit(goal.id)}
-                          className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-green-700"
+                          className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-green-700 cursor-pointer"
                         >
                           Lưu
                         </button>
                         <button
                           onClick={() => setEditingId(null)}
-                          className="bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-400"
+                          className="bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-400 cursor-pointer"
                         >
                           Hủy
                         </button>
@@ -327,18 +233,7 @@ export default function GoalsPage() {
                             </svg>
                           </button>
 
-                          <button
-                            onClick={() => handleDelete(goal.id)}
-                            title="Xóa mục tiêu"
-                            className="text-gray-400 hover:text-red-600 p-1.5 transition-colors cursor-pointer"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="3 6 5 6 21 6"></polyline>
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                              <line x1="10" y1="11" x2="10" y2="17"></line>
-                              <line x1="14" y1="11" x2="14" y2="17"></line>
-                            </svg>
-                          </button>
+                          <DeleteButton id={goal.id} onDeleted={fetchGoals} />
                         </div>
                       </div>
                     </>
