@@ -63,6 +63,9 @@ export default function GoalsPage() {
   const [editProgress, setEditProgress] = useState(0);
   const [editStatus, setEditStatus] = useState('');
 
+  // THÊM: State quản lý trạng thái bộ lọc ('Tất cả' hoặc các trạng thái cụ thể)
+  const [filterStatus, setFilterStatus] = useState('Tất cả');
+
   const fetchGoals = async () => {
     try {
       const res = await fetch('/api/goals');
@@ -124,7 +127,6 @@ export default function GoalsPage() {
     }
   };
 
-  // Kích hoạt chế độ sửa cho mục tiêu tương ứng
   const handleStartEdit = (goal: Goal) => {
     setEditingId(goal.id);
     setEditTitle(goal.title);
@@ -132,7 +134,6 @@ export default function GoalsPage() {
     setEditStatus(goal.status);
   };
 
-  // Lưu lại nội dung sau khi chỉnh sửa
   const handleSaveEdit = async (id: number) => {
     try {
       const res = await fetch('/api/goals', {
@@ -156,6 +157,12 @@ export default function GoalsPage() {
       console.error('Lỗi khi cập nhật mục tiêu:', error);
     }
   };
+
+  // THÊM: Lọc danh sách mục tiêu dựa theo giá trị `filterStatus`
+  const filteredGoals = goals.filter((goal) => {
+    if (filterStatus === 'Tất cả') return true;
+    return goal.status === filterStatus;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
@@ -216,17 +223,34 @@ export default function GoalsPage() {
         </form>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
+          {/* Header danh sách & Các nút bộ lọc trạng thái */}
+          <div className="px-6 py-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h2 className="text-lg font-semibold text-gray-700">Danh sách mục tiêu hiện tại</h2>
+            
+            <div className="flex flex-wrap gap-2">
+              {['Tất cả', 'Đang thực hiện', 'Hoàn thành', 'Tạm hoãn'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setFilterStatus(tab)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                    filterStatus === tab
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
           </div>
-          {goals.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">Chưa có mục tiêu nào được tạo. Hãy thêm mục tiêu đầu tiên!</div>
+
+          {filteredGoals.length === 0 ? (
+            <div className="p-6 text-center text-gray-500">Không có mục tiêu nào phù hợp với bộ lọc này.</div>
           ) : (
             <div className="divide-y divide-gray-100">
-              {goals.map((goal) => (
+              {filteredGoals.map((goal) => (
                 <div key={goal.id} className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   {editingId === goal.id ? (
-                    /* GIAO DIỆN KHI ĐANG SỬA */
                     <div className="flex-1 flex flex-col md:flex-row gap-3 w-full">
                       <input
                         type="text"
@@ -267,7 +291,6 @@ export default function GoalsPage() {
                       </div>
                     </div>
                   ) : (
-                    /* GIAO DIỆN HIỂN THỊ BÌNH THƯỜNG */
                     <>
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-800 text-lg mb-1">{goal.title}</h3>
@@ -293,7 +316,6 @@ export default function GoalsPage() {
                         </div>
 
                         <div className="flex items-center gap-1">
-                          {/* Nút Sửa */}
                           <button
                             onClick={() => handleStartEdit(goal)}
                             title="Sửa mục tiêu"
@@ -305,7 +327,6 @@ export default function GoalsPage() {
                             </svg>
                           </button>
 
-                          {/* Nút Xóa */}
                           <button
                             onClick={() => handleDelete(goal.id)}
                             title="Xóa mục tiêu"
