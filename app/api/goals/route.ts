@@ -55,3 +55,29 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Không thể xóa mục tiêu' }, { status: 500 });
   }
 }
+
+// PUT: Cập nhật thông tin mục tiêu dựa vào ID
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, title, progress, status } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Thiếu ID mục tiêu cần sửa' }, { status: 400 });
+    }
+
+    const updatedGoal = await prisma.goal.update({
+      where: { id: Number(id) },
+      data: {
+        ...(title && { title }),
+        ...(progress !== undefined && { progress: parseInt(progress) }),
+        ...(status && { status }),
+      },
+    });
+
+    return NextResponse.json(updatedGoal, { status: 200 });
+  } catch (error) {
+    console.error('Lỗi khi cập nhật mục tiêu:', error);
+    return NextResponse.json({ error: 'Không thể cập nhật mục tiêu' }, { status: 500 });
+  }
+}
