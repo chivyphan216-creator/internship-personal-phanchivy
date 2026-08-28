@@ -1,0 +1,128 @@
+# TEST CASES - QUẢN LÝ MỤC TIÊU HỌC TẬP
+
+## 1. Authentication (Xác thực)
+
+* **TC01 - Đăng ký tài khoản hợp lệ**
+  * *Thực hiện:* Nhập họ tên, email mới và mật khẩu từ 6 ký tự trở lên.
+  * *Kết quả mong đợi:* Tài khoản được tạo thành công và chuyển hướng về trang đăng nhập.
+* **TC02 - Đăng ký bằng email đã tồn tại**
+  * *Thực hiện:* Nhập email của một tài khoản đã có sẵn trong hệ thống.
+  * *Kết quả mong đợi:* Hiển thị thông báo lỗi "Email đã tồn tại".
+* **TC03 - Đăng ký với mật khẩu dưới 6 ký tự**
+  * *Thực hiện:* Nhập mật khẩu có độ dài dưới 6 ký tự.
+  * *Kết quả mong đợi:* Hệ thống chặn đăng ký hoặc hiển thị lỗi validation.
+* **TC04 - Đăng nhập hợp lệ**
+  * *Thực hiện:* Nhập đúng email và mật khẩu đã đăng ký.
+  * *Kết quả mong đợi:* Đăng nhập thành công và chuyển hướng đến trang Dashboard mục tiêu học tập.
+* **TC05 - Đăng nhập sai mật khẩu**
+  * *Thực hiện:* Nhập đúng email nhưng sai mật khẩu.
+  * *Kết quả mong đợi:* Hiển thị thông báo lỗi "Email hoặc mật khẩu không đúng".
+* **TC06 - Đăng nhập với email không tồn tại**
+  * *Thực hiện:* Nhập email chưa từng được đăng ký trong hệ thống.
+  * *Kết quả mong đợi:* Hiển thị thông báo lỗi "Email hoặc mật khẩu không đúng".
+* **TC07 - Đăng xuất**
+  * *Thực hiện:* Đã đăng nhập, sau đó bấm vào nút "Đăng xuất".
+  * *Kết quả mong đợi:* Phiên làm việc (Session) bị xóa và chuyển hướng về trang đăng nhập.
+
+---
+
+## 2. Authorization (Phân quyền)
+
+* **TC08 - USER truy cập trang quản trị**
+  * *Thực hiện:* Đăng nhập bằng tài khoản có vai trò USER, cố gắng truy cập đường dẫn `/admin`.
+  * *Kết quả mong đợi:* Người dùng bị từ chối truy cập và chuyển hướng về trang chủ.
+* **TC09 - ADMIN xem danh sách người dùng**
+  * *Thực hiện:* Đăng nhập bằng tài khoản ADMIN và mở trang quản lý người dùng.
+  * *Kết quả mong đợi:* Hiển thị danh sách toàn bộ các tài khoản trong hệ thống.
+* **TC10 - USER chỉ xem mục tiêu của mình**
+  * *Thực hiện:* Đăng nhập bằng hai tài khoản USER khác nhau.
+  * *Kết quả mong đợi:* Mỗi USER chỉ nhìn thấy danh sách mục tiêu học tập thuộc sở hữu của riêng tài khoản đó.
+* **TC11 - USER sửa mục tiêu của người khác**
+  * *Thực hiện:* USER cố ý truy cập URL chỉnh sửa mục tiêu thuộc sở hữu của USER khác.
+  * *Kết quả mong đợi:* Hệ thống từ chối quyền và chuyển hướng về trang chủ.
+* **TC12 - USER xóa mục tiêu của người khác**
+  * *Thực hiện:* Gửi yêu cầu xóa mục tiêu của tài khoản khác qua API hoặc giao diện.
+  * *Kết quả mong đợi:* Server từ chối thực hiện thao tác xóa.
+
+---
+
+## 3. CRUD Goals (Quản lý mục tiêu học tập)
+
+* **TC13 - Thêm mục tiêu học tập hợp lệ**
+  * *Thực hiện:* Nhập đầy đủ thông tin hợp lệ (Tiêu đề, danh mục, tiến độ, hạn chót).
+  * *Kết quả mong đợi:* Mục tiêu được lưu vào cơ sở dữ liệu và hiển thị trực tiếp lên Dashboard.
+* **TC14 - Tiêu đề để trống**
+  * *Thực hiện:* Bỏ trống ô nhập tiêu đề mục tiêu.
+  * *Kết quả mong đợi:* Nút submit bị chặn hoặc báo lỗi không được để trống.
+* **TC15 - Tiêu đề dưới 3 ký tự**
+  * *Thực hiện:* Nhập tiêu đề quá ngắn (ví dụ: "Hl").
+  * *Kết quả mong đợi:* Validation từ chối tạo mục tiêu và báo lỗi tối thiểu 3 ký tự.
+* **TC16 - Chọn ngày hạn hoàn thành đã qua**
+  * *Thực hiện chọn hạn chót:* Chọn ngày nhỏ hơn ngày hiện tại.
+  * *Kết quả mong đợi:* Hệ thống báo lỗi và không cho phép tạo mục tiêu.
+* **TC17 - Sửa mục tiêu học tập**
+  * *Thực hiện:* Thay đổi tiêu đề, danh mục, mức độ ưu tiên hoặc phần trăm tiến độ của mục tiêu.
+  * *Kết quả mong đợi:* Dữ liệu được cập nhật thành công trên giao diện và cơ sở dữ liệu.
+* **TC18 - Bấm nút xóa mục tiêu**
+  * *Thực hiện:* Bấm vào nút "Xóa" trên một mục tiêu học tập.
+  * *Kết quả mong đợi:* Xuất hiện hộp thoại xác nhận (Confirm dialog) trước khi xóa.
+* **TC19 - Hủy xóa mục tiêu**
+  * *Thực hiện:* Bấm Xóa sau đó chọn "Cancel" tại hộp thoại xác nhận.
+  * *Kết quả mong đợi:* Mục tiêu học tập vẫn được giữ nguyên trong danh sách.
+* **TC20 - Xác nhận xóa mục tiêu**
+  * *Thực hiện:* Bấm Xóa sau đó chọn "OK" / "Xác nhận".
+  * *Kết quả mong đợi:* Mục tiêu bị xóa khỏi cơ sở dữ liệu và biến mất khỏi Dashboard.
+
+---
+
+## 4. Search & Filter (Tìm kiếm & Lọc)
+
+* **TC21 - Tìm kiếm có kết quả**
+  * *Thực hiện:* Nhập từ khóa trùng khớp với tiêu đề một mục tiêu đang có.
+  * *Kết quả mong đợi:* Chỉ hiển thị duy nhất các mục tiêu học tập phù hợp với từ khóa.
+* **TC22 - Tìm kiếm không có kết quả**
+  * *Thực hiện:* Nhập từ khóa không tồn tại trong bất kỳ mục tiêu nào.
+  * *Kết quả mong đợi:* Hiển thị trạng thái thông báo không tìm thấy dữ liệu.
+* **TC23 - Lọc trạng thái "Chưa làm" (TODO)**
+  * *Thực hiện:* Chọn bộ lọc trạng thái "Chưa làm".
+  * *Kết quả mong đợi:* Chỉ hiển thị các mục tiêu học tập ở trạng thái TODO.
+* **TC24 - Lọc trạng thái "Đang làm" (IN_PROGRESS)**
+  * *Thực hiện:* Chọn bộ lọc trạng thái "Đang làm".
+  * *Kết quả mong đợi:* Chỉ hiển thị các mục tiêu học tập đang thực hiện.
+* **TC25 - Lọc trạng thái "Hoàn thành" (COMPLETED)**
+  * *Thực hiện:* Chọn bộ lọc trạng thái "Hoàn thành".
+  * *Kết quả mong đợi:* Chỉ hiển thị các mục tiêu học tập đã đạt 100% hoặc hoàn thành.
+* **TC26 - Kết hợp tìm kiếm và lọc danh mục/trạng thái**
+  * *Thực hiện:* Vừa nhập từ khóa tìm kiếm vừa chọn bộ lọc trạng thái.
+  * *Kết quả mong đợi:* Chỉ hiển thị các mục tiêu thỏa mãn đồng thời cả hai điều kiện.
+
+---
+
+## 5. UI / UX & Trạng thái giao diện
+
+* **TC27 - Empty State (Trạng thái trống)**
+  * *Thực hiện:* Đăng nhập bằng tài khoản chưa tạo bất kỳ mục tiêu học tập nào.
+  * *Kết quả mong đợi:* Hiển thị giao diện thông báo "Chưa có mục tiêu học tập nào".
+* **TC28 - Loading State**
+  * *Thực hiện:* Tải lại trang trong lúc hệ thống đang fetch dữ liệu từ cơ sở dữ liệu.
+  * *Kết quả mong đợi:* Hiển thị khung xương (Skeleton Loading) mượt mà.
+* **TC29 - Error State**
+  * *Thực hiện:* Truy cập route khi xảy ra lỗi kết nối cơ sở dữ liệu hoặc lỗi không xác định.
+  * *Kết quả mong đợi:* Hiển thị giao diện thông báo lỗi kèm theo nút "Thử lại" (Retry).
+* **TC30 - Responsive Design**
+  * *Thực hiện:* Kiểm tra giao diện ứng dụng trên các kích thước màn hình Desktop, Tablet và Mobile.
+  * *Kết quả mong đợi:* Giao diện tự động co giãn linh hoạt, bố cục không bị tràn ngang màn hình.
+
+---
+
+## 6. Notification (Thông báo hệ thống)
+
+* **TC31 - Thông báo thêm mục tiêu thành công**
+  * *Thực hiện:* Tạo mới một mục tiêu học tập hợp lệ.
+  * *Kết quả mong đợi:* Dashboard hiển thị thông báo popup hoặc toast báo thêm thành công.
+* **TC32 - Thông báo cập nhật thành công**
+  * *Thực hiện:* Chỉnh sửa thông tin một mục tiêu học tập.
+  * *Kết quả mong đợi:* Hiển thị thông báo cập nhật thành công.
+* **TC33 - Thông báo xóa thành công**
+  * *Thực hiện:* Xác nhận xóa mục tiêu học tập.
+  * *Kết quả mong đợi:* Hiển thị thông báo xóa thành công và danh sách được làm mới.
