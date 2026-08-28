@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import DashboardView from '../components/DashboardView';
-import TransactionForm from '../components/TransactionForm';
-import DeleteButton from '../components/DeleteButton';
+import DashboardView from '../../components/DashboardView';
+import TransactionForm from '../../components/TransactionForm';
+import DeleteButton from '../../components/DeleteButton';
 
 interface Goal {
   id: number;
