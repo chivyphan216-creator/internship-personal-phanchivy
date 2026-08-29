@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 // GET: Lấy danh sách mục tiêu từ database
 export async function GET() {
@@ -11,6 +9,7 @@ export async function GET() {
     });
     return NextResponse.json(goals, { status: 200 });
   } catch (error) {
+    console.error('Lỗi khi lấy dữ liệu mục tiêu:', error);
     return NextResponse.json({ error: 'Không thể lấy dữ liệu mục tiêu' }, { status: 500 });
   }
 }
@@ -31,6 +30,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(newGoal, { status: 201 });
   } catch (error) {
+    console.error('Lỗi khi tạo mục tiêu mới:', error);
     return NextResponse.json({ error: 'Không thể tạo mục tiêu mới' }, { status: 500 });
   }
 }
