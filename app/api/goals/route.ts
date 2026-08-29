@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '../../lib/prisma';
 
 // GET: Lấy danh sách mục tiêu từ database
 export async function GET() {
