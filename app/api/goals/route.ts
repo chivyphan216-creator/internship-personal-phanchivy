@@ -19,13 +19,13 @@ export async function GET() {
 // POST: Thêm mới một mục tiêu
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { title, progress, status } = body;
 
     const newGoal = await prisma.goal.create({
       data: {
         title: title || 'Mục tiêu mới',
-        progress: progress ? parseInt(progress) : 0,
+        progress: progress !== undefined ? parseInt(progress) : 0,
         status: status || 'Đang thực hiện',
       },
     });
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 // DELETE: Xóa một mục tiêu dựa vào ID
 export async function DELETE(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { id } = body;
 
     if (!id) {
@@ -61,7 +61,7 @@ export async function DELETE(request: Request) {
 // PUT: Cập nhật thông tin mục tiêu dựa vào ID
 export async function PUT(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { id, title, progress, status } = body;
 
     if (!id) {
